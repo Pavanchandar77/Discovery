@@ -1,18 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
+import { AlertTriangle, ShieldCheck } from 'lucide-react';
 import { DashboardData } from '../../types';
 
 export default function ComparisonSection({ data }: { data: DashboardData }) {
-  const atsList = [...data.cards].sort((a,b) => a.ats_rank - b.ats_rank).slice(0, 8);
-  const discList = [...data.cards].sort((a,b) => a.our_rank - b.our_rank).slice(0, 8);
-
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  const getRankShift = (candidateId: string) => {
-    const c = data.cards.find(x => x.candidate_id === candidateId);
-    if (!c) return 0;
-    return c.ats_rank - c.our_rank;
-  };
+  const atsList = data.ats_top10 ?? [];
+  const ourList = data.our_top10 ?? [];
+  const rows = Math.max(atsList.length, ourList.length);
 
   return (
     <section className="min-h-screen py-24 px-6 md:px-12 max-w-7xl mx-auto flex flex-col justify-center">
@@ -20,14 +14,41 @@ export default function ComparisonSection({ data }: { data: DashboardData }) {
          initial={{ opacity: 0, y: 30 }}
          whileInView={{ opacity: 1, y: 0 }}
          viewport={{ once: true, margin: "-100px" }}
-         className="mb-24 text-center"
+         className="mb-16 text-center"
       >
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white mb-6">
-          The Paradigm Shift
+          ATS vs Discovery
         </h2>
         <p className="text-xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed">
-          Comparing the outputs of rigid legacy indexes against the Discovery intelligence engine.
+          The legacy keyword index against the Discovery engine — same pool, two different top tens.
         </p>
+      </motion.div>
+
+      {/* Stuffer scoreboard */}
+      <motion.div
+         initial={{ opacity: 0, y: 20 }}
+         whileInView={{ opacity: 1, y: 0 }}
+         viewport={{ once: true }}
+         className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16"
+      >
+        <div className="bg-rose-500/[0.04] border border-rose-500/10 rounded-3xl p-8 flex items-center gap-6">
+          <div className="w-14 h-14 rounded-2xl bg-rose-500/10 flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-6 h-6 text-rose-400" />
+          </div>
+          <div>
+            <div className="text-4xl md:text-5xl font-medium tracking-tighter text-white">{data.stuffers_in_ats_top}</div>
+            <div className="text-sm text-slate-400 font-light mt-1">Keyword stuffers in the ATS top-100</div>
+          </div>
+        </div>
+        <div className="bg-cyan-500/[0.04] border border-cyan-500/10 rounded-3xl p-8 flex items-center gap-6">
+          <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-6 h-6 text-cyan-400" />
+          </div>
+          <div>
+            <div className="text-4xl md:text-5xl font-medium tracking-tighter text-white">{data.stuffers_in_our_top}</div>
+            <div className="text-sm text-slate-400 font-light mt-1">Keyword stuffers in the Discovery top</div>
+          </div>
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 relative">
@@ -36,57 +57,43 @@ export default function ComparisonSection({ data }: { data: DashboardData }) {
 
         {/* ATS Side */}
         <div className="relative">
-           <div className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-8 pb-4 border-b border-white/5 pl-4">Legacy ATS Evaluation</div>
+           <div className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-8 pb-4 border-b border-white/5 pl-4">Legacy ATS · Top 10</div>
            <div className="space-y-3">
-             {atsList.map((c, i) => (
-               <div 
-                 key={c.candidate_id}
-                 onMouseEnter={() => setHoveredId(c.candidate_id)}
-                 onMouseLeave={() => setHoveredId(null)}
-                 className={`flex items-center gap-6 p-5 rounded-2xl transition-all duration-300 border border-transparent ${hoveredId === c.candidate_id ? 'bg-white/5 border-white/10' : hoveredId ? 'opacity-20' : 'hover:bg-white/[0.02]'}`}
+             {atsList.map((title, i) => (
+               <div
+                 key={`ats-${i}`}
+                 className="flex items-center gap-6 p-5 rounded-2xl transition-all duration-300 border border-transparent hover:bg-white/[0.02]"
                >
                  <div className="text-2xl font-light text-slate-600 w-8 tracking-tighter text-right">{i + 1}</div>
-                 <div className="flex-1">
-                   <div className="text-slate-300 font-medium">Candidate {c.candidate_id.split('_').pop()}</div>
-                   <div className="text-xs text-slate-600 truncate mt-1 font-light">{c.title}</div>
-                 </div>
-                 <div className="text-right text-xs text-slate-600 font-mono">
-                    #{c.ats_rank}
+                 <div className="flex-1 min-w-0">
+                   <div className="text-slate-300 font-medium truncate">{title}</div>
                  </div>
                </div>
              ))}
+             {atsList.length === 0 && <div className="text-slate-600 text-sm font-light pl-4">No ATS ranking provided.</div>}
            </div>
         </div>
 
         {/* Discovery Side */}
         <div className="relative">
-           <div className="text-[10px] font-semibold uppercase tracking-widest text-cyan-400 mb-8 pb-4 border-b border-white/5 pl-4">Discovery Engine Valuation</div>
+           <div className="text-[10px] font-semibold uppercase tracking-widest text-cyan-400 mb-8 pb-4 border-b border-white/5 pl-4">Discovery Engine · Top 10</div>
            <div className="space-y-3">
-             {discList.map((c, i) => {
-               const shift = getRankShift(c.candidate_id);
-               const isMassive = shift > 100;
-               return (
-               <div 
-                 key={c.candidate_id}
-                 onMouseEnter={() => setHoveredId(c.candidate_id)}
-                 onMouseLeave={() => setHoveredId(null)}
-                 className={`flex items-center gap-6 p-5 rounded-2xl transition-all duration-300 border ${hoveredId === c.candidate_id ? 'bg-cyan-950/20 border-cyan-500/20 shadow-[0_0_20px_rgba(34,211,238,0.05)] scale-[1.02]' : hoveredId ? 'opacity-20 border-transparent' : 'border-transparent hover:bg-white/[0.02]'}`}
+             {ourList.map((title, i) => (
+               <div
+                 key={`our-${i}`}
+                 className="flex items-center gap-6 p-5 rounded-2xl transition-all duration-300 border border-transparent hover:bg-cyan-950/10"
                >
                  <div className="text-2xl font-medium text-cyan-500 w-8 tracking-tighter text-right drop-shadow-sm">{i + 1}</div>
-                 <div className="flex-1">
-                   <div className="text-white font-medium">Candidate {c.candidate_id.split('_').pop()}</div>
-                   <div className="text-xs text-cyan-400/60 truncate mt-1 font-light">High evidence density confirmed</div>
-                 </div>
-                 <div className="text-right">
-                    <div className="text-sm font-medium text-white mb-1 font-mono">#{c.our_rank}</div>
-                    <div className={`text-[10px] font-semibold tracking-wider ${isMassive ? 'text-cyan-400' : 'text-slate-500'}`}>
-                       +{shift > 0 ? shift : 0} 
-                    </div>
+                 <div className="flex-1 min-w-0">
+                   <div className="text-white font-medium truncate">{title}</div>
                  </div>
                </div>
-             )})}
+             ))}
+             {ourList.length === 0 && <div className="text-slate-600 text-sm font-light pl-4">No Discovery ranking provided.</div>}
            </div>
         </div>
+
+        {rows === 0 && null}
       </div>
     </section>
   )

@@ -2,11 +2,11 @@ import { DashboardData } from "./types";
 
 export const MOCK_DASHBOARD_DATA: DashboardData = {
   n_candidates: 342,
-  market_efficiency_pct: 68.4,
-  mispriced_pct: 31.6,
+  market_efficiency_pct: 43,
+  mispriced_pct: 57,
   hidden_gems: 14,
-  avg_tmi: 42.1,
-  highest_tmi: 94.3,
+  avg_tmi: 88,
+  highest_tmi: 141,
   hero: {
     candidate_id: "CAND_00142",
     title: "Senior Machine Learning Engineer",

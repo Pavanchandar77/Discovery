@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { DashboardData } from '../../types';
+import { formatTmi } from '../../lib/utils';
 
 export default function HiddenGemsSection({ data }: { data: DashboardData }) {
   const gems = [...data.cards]
@@ -37,15 +38,34 @@ export default function HiddenGemsSection({ data }: { data: DashboardData }) {
 
              <div className="absolute top-0 right-0 p-8 md:p-10">
                <div className="text-right">
-                 <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-500 mb-1">Density Multiple</div>
-                 <div className="text-3xl font-medium tracking-tighter text-cyan-400">{gem.tmi}x</div>
+                 <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-500 mb-1">Talent Mispricing Index</div>
+                 <div className="text-3xl font-medium tracking-tighter text-cyan-400">{formatTmi(gem.tmi)}</div>
                </div>
              </div>
 
-             <div className="mb-10 mt-2">
-                <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-500 mb-3 block">Identified Asset</div>
+             <div className="mb-8 mt-2">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-500">Identified Asset</div>
+                  <span className="text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">{gem.quadrant}</span>
+                </div>
                 <h3 className="text-3xl font-medium text-white tracking-tight mb-2">Candidate {gem.candidate_id.split('_').pop()}</h3>
                 <p className="text-base text-slate-400 font-light">{gem.title}</p>
+             </div>
+
+             {/* Conviction metrics */}
+             <div className="grid grid-cols-3 gap-4 mb-8">
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-1">Fit</div>
+                  <div className="text-2xl font-medium text-white tracking-tighter">{gem.fit}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-1">Conviction</div>
+                  <div className="text-2xl font-medium text-white tracking-tighter">{gem.conviction}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-1">Evidence</div>
+                  <div className="text-2xl font-medium text-white tracking-tighter">{gem.evidence_density}<span className="text-sm text-slate-500">%</span></div>
+                </div>
              </div>
 
              <div className="grid grid-cols-2 gap-8 mb-10 pb-10 border-b border-white/5">

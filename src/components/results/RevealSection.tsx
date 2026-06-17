@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Candidate } from '../../types';
+import { formatInt } from '../../lib/utils';
 
 export default function RevealSection({ hero }: { hero?: Candidate }) {
   const [phase, setPhase] = useState<'scan' | 'isolate' | 'reveal'>('scan');
@@ -209,7 +210,7 @@ export default function RevealSection({ hero }: { hero?: Candidate }) {
                    +{improvement} Position Gain
                  </div>
                  <div className="text-sm font-light text-slate-400 max-w-xs text-left leading-relaxed">
-                    Evidence density exceeded expected market baseline by <span className="text-white font-medium">{Math.round(hero.tmi * 10) / 10}x</span>.
+                    Talent Mispricing Index of <span className="text-white font-medium">{formatInt(hero.tmi)}</span> — the positions the ATS buried this candidate by.
                  </div>
                </motion.div>
             </div>
