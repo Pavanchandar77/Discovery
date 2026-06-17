@@ -1,7 +1,7 @@
 import { DashboardData } from "./types";
 import { MOCK_DASHBOARD_DATA } from "./mockData";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE = (import.meta as any).env.VITE_API_BASE_URL || "";
 
 export async function fetchDemoDashboard(): Promise<DashboardData> {
   if (!API_BASE) {
@@ -27,7 +27,7 @@ export async function uploadCandidatesAndRank(file: File): Promise<DashboardData
     const formData = new FormData();
     formData.append("file", file);
     
-    const res = await fetch(`${API_BASE}/rank`, {
+    const res = await fetch(`${API_BASE}/rank?top_k=100`, {
       method: "POST",
       body: formData,
     });

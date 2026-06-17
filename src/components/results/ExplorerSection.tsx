@@ -1,0 +1,174 @@
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { DashboardData, Candidate } from '../../types';
+
+export default function ExplorerSection({ data }: { data: DashboardData }) {
+  const [query, setQuery] = useState('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const filtered = useMemo(() => {
+    return data.cards.filter(c => 
+       c.candidate_id.toLowerCase().includes(query.toLowerCase()) || 
+       c.title.toLowerCase().includes(query.toLowerCase())
+    ).sort((a,b) => a.our_rank - b.our_rank);
+  }, [data, query]);
+
+  return (
+    <section className="min-h-screen py-24 px-6 md:px-12 max-w-7xl mx-auto flex flex-col justify-center">
+      <motion.div
+         initial={{ opacity: 0, y: 30 }}
+         whileInView={{ opacity: 1, y: 0 }}
+         viewport={{ once: true, margin: "-100px" }}
+         className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8"
+      >
+        <div>
+          <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white mb-6">
+            The Explorer
+          </h2>
+          <p className="text-xl text-slate-400 font-light max-w-xl leading-relaxed">
+            Examine the entire talent pool through the lens of pure evidence density.
+          </p>
+        </div>
+        
+        <div className="relative w-full md:w-72">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <input 
+            type="text" 
+            placeholder="Search candidates..." 
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full bg-white/[0.02] border border-white/10 rounded-full py-3 pl-12 pr-6 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:bg-white/5 transition-all duration-300"
+          />
+        </div>
+      </motion.div>
+
+      <div className="bg-[#050505] border border-white/10 rounded-3xl overflow-hidden shadow-2xl pb-16">
+         {/* Table Header */}
+         <div className="grid grid-cols-12 gap-4 px-8 py-6 border-b border-white/5 text-xs font-semibold uppercase tracking-widest text-slate-500 hidden md:grid bg-black/40">
+           <div className="col-span-4">Candidate</div>
+           <div className="col-span-2 text-right">ATS Rank</div>
+           <div className="col-span-2 text-right text-cyan-500/80">Disc Rank</div>
+           <div className="col-span-3 text-right">Evidence Mix (TMI)</div>
+           <div className="col-span-1"></div>
+         </div>
+
+         {/* Table Body */}
+         <div className="divide-y divide-white/5 block">
+           {filtered.slice(0, 50).map(c => {
+             const isExpanded = expandedId === c.candidate_id;
+             const shift = c.ats_rank - c.our_rank;
+             const isGem = shift > 100;
+             const displayId = c.candidate_id.split('_').pop();
+
+             return (
+               <div key={c.candidate_id} className="relative group hover:bg-white/[0.02] transition-colors duration-300 w-full overflow-hidden">
+                 {/* Row base */}
+                 <div 
+                   onClick={() => setExpandedId(isExpanded ? null : c.candidate_id)}
+                   className="grid grid-cols-1 md:grid-cols-12 gap-4 px-8 py-6 items-center cursor-pointer relative z-10 w-full"
+                 >
+                   <div className="col-span-1 md:col-span-4 block">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-medium text-white/70 tracking-tighter">
+                          {displayId}
+                        </div>
+                        <div>
+                          <div className="text-white font-medium mb-1 drop-shadow-sm">Candidate {displayId}</div>
+                          <div className="text-slate-500 text-xs truncate max-w-[200px]">{c.title}</div>
+                        </div>
+                      </div>
+                   </div>
+                   
+                   <div className="col-span-2 text-right hidden md:block w-full">
+                      <div className="text-slate-500 line-through decoration-white/10 tracking-tighter">#{c.ats_rank}</div>
+                   </div>
+                   
+                   <div className="col-span-2 text-right hidden md:block w-full">
+                      <div className="text-white font-medium tracking-tighter">#{c.our_rank}</div>
+                      {isGem && <div className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider mt-1">Hidden Gem</div>}
+                   </div>
+                   
+                   <div className="col-span-3 text-right hidden md:block w-full">
+                      <div className="text-slate-300 font-medium">{c.tmi.toFixed(1)}x</div>
+                      <div className="w-full h-1 bg-white/5 rounded-full mt-2 overflow-hidden flex justify-end">
+                        <div 
+                           className={`h-full rounded-full ${isGem ? 'bg-cyan-500' : 'bg-slate-500'}`} 
+                           style={{ width: `${Math.min(c.tmi, 100)}%` }}
+                        />
+                      </div>
+                   </div>
+                   
+                   <div className="col-span-1 hidden md:flex justify-end w-full">
+                      {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                   </div>
+                 </div>
+
+                 <AnimatePresence initial={false}>
+                   {isExpanded && (
+                     <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden bg-black/40 border-t border-white/5 w-full relative z-0"
+                     >
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 p-8 lg:p-12 text-sm w-full">
+                          
+                          <div className="w-full">
+                            <h4 className="text-[10px] uppercase font-semibold tracking-widest text-cyan-400 mb-6 flex items-center gap-2">
+                              <span className="w-1 h-3 bg-cyan-400 rounded-full" />
+                              High Conviction Evidence
+                            </h4>
+                            <ul className="space-y-4">
+                              {c.trust_drivers.map((d, i) => (
+                                <li key={i} className="flex gap-4 items-start w-full text-slate-300 font-light leading-relaxed">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0" />
+                                  <span className="block">{d}</span>
+                                </li>
+                              ))}
+                              {c.trust_drivers.length === 0 && <span className="text-slate-500 italic">No extra evidence provided.</span>}
+                            </ul>
+                          </div>
+
+                          <div className="w-full">
+                            <h4 className="text-[10px] uppercase font-semibold tracking-widest text-slate-500 mb-6 flex items-center gap-2">
+                              <span className="w-1 h-3 bg-slate-500 rounded-full" />
+                              Algorithmic Reasoning (Engine View)
+                            </h4>
+                            <p className="text-slate-400 font-light leading-relaxed mb-8 w-full block">
+                               {c.reasoning || "Standard candidate evaluation completed."}
+                            </p>
+
+                            <h4 className="text-[10px] uppercase font-semibold tracking-widest text-rose-400/80 mb-6 flex items-center gap-2">
+                              <span className="w-1 h-3 bg-rose-500 rounded-full" />
+                              Potential Risks
+                            </h4>
+                            <ul className="space-y-4">
+                              {c.concerns.map((cnc, i) => (
+                                <li key={i} className="flex gap-4 items-start w-full text-slate-400 font-light leading-relaxed">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-rose-500/50 mt-1.5 shrink-0" />
+                                  <span className="block">{cnc}</span>
+                                </li>
+                              ))}
+                              {c.concerns.length === 0 && <span className="text-slate-500 italic">No red flags.</span>}
+                            </ul>
+                          </div>
+                          
+                       </div>
+                     </motion.div>
+                   )}
+                 </AnimatePresence>
+               </div>
+             )
+           })}
+
+           {filtered.length === 0 && (
+             <div className="p-12 text-center text-slate-500 font-light">
+               No candidates match your search.
+             </div>
+           )}
+         </div>
+      </div>
+    </section>
+  )
+}
