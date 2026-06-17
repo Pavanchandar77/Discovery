@@ -20,17 +20,17 @@ export default function TalentMapSection({ data }: { data: DashboardData }) {
     if (active && payload && payload.length) {
       const pData = payload[0].payload;
       return (
-        <div className="bg-black/80 backdrop-blur-md border border-white/10 p-4 rounded-xl shadow-2xl">
-          <p className="text-white font-medium mb-1 drop-shadow">Candidate {pData.name.split('_').pop()}</p>
-          <p className="text-slate-400 text-xs mb-3">{pData.role}</p>
-          <div className="grid grid-cols-2 gap-4 text-xs">
+        <div className="bg-[#0a0a0c]/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl shadow-2xl">
+          <p className="text-white font-medium mb-1 drop-shadow tracking-tight">Asset {pData.name.split('_').pop()}</p>
+          <p className="text-slate-400 text-xs mb-4 font-light">{pData.role}</p>
+          <div className="grid grid-cols-2 gap-6 text-xs">
             <div>
-              <span className="text-slate-500 uppercase tracking-wider block mb-1">ATS Rank</span>
-              <span className="text-slate-300 font-medium">#{pData.x}</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1 font-semibold">Market Valuation</span>
+              <span className="text-slate-300 font-medium text-lg">#{pData.x}</span>
             </div>
             <div>
-              <span className="text-cyan-400 uppercase tracking-wider block mb-1">Disc Rank</span>
-              <span className="text-white font-medium">#{pData.y}</span>
+              <span className="text-[10px] text-cyan-400 uppercase tracking-widest block mb-1 font-semibold">Discovery Valuation</span>
+              <span className="text-white font-medium text-lg">#{pData.y}</span>
             </div>
           </div>
         </div>
@@ -48,10 +48,10 @@ export default function TalentMapSection({ data }: { data: DashboardData }) {
          className="mb-16"
       >
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white mb-6">
-          The Talent Map
+          The Intelligence Grid
         </h2>
         <p className="text-xl text-slate-400 font-light max-w-2xl leading-relaxed">
-          Comparing exact traditional ATS scores vs Discovery rankings. The top left quadrant represents hidden gems.
+          Comparing exact traditional market scores against Discovery's valuation. The top left quadrant reveals extreme asymmetry.
         </p>
       </motion.div>
 
@@ -60,38 +60,42 @@ export default function TalentMapSection({ data }: { data: DashboardData }) {
          whileInView={{ opacity: 1 }}
          viewport={{ once: true }}
          transition={{ duration: 1.5, delay: 0.2 }}
-         className="w-full h-[600px] bg-white/[0.01] border border-white/5 rounded-3xl p-6 relative group"
+         className="w-full h-[600px] bg-white/[0.01] border border-white/5 rounded-3xl p-4 md:p-8 relative group shadow-2xl"
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none rounded-3xl" />
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
             <XAxis 
               type="number" 
               dataKey="x" 
               name="ATS Rank" 
-              stroke="rgba(255,255,255,0.2)"
-              tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+              stroke="rgba(255,255,255,0.1)"
+              tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'monospace' }}
+              tickLine={false}
+              axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
               reversed // So best rank is left
             />
             <YAxis 
               type="number" 
               dataKey="y" 
               name="Discovery Rank" 
-              stroke="rgba(255,255,255,0.2)"
-              tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+              stroke="rgba(255,255,255,0.1)"
+              tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'monospace' }}
+              tickLine={false}
+              axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
               reversed // So best rank is top
             />
-            <ZAxis type="number" dataKey="z" range={[20, 150]} />
-            <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.1)' }} />
+            <ZAxis type="number" dataKey="z" range={[20, 200]} />
+            <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.05)' }} />
             <Scatter name="Candidates" data={chartData} isAnimationActive={false}>
               {chartData.map((entry, index) => {
                 const isGem = entry.x - entry.y > 100;
                 return (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={isGem ? "#22d3ee" : "rgba(255,255,255,0.2)"} 
-                    className={isGem ? "drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] mix-blend-screen transition-all duration-300 hover:scale-150 origin-center" : ""}
+                    fill={isGem ? "#22d3ee" : "rgba(255,255,255,0.15)"} 
+                    className={isGem ? "drop-shadow-[0_0_12px_rgba(34,211,238,0.6)] mix-blend-screen transition-all duration-300 hover:scale-[2] origin-center cursor-pointer" : "cursor-pointer hover:scale-[1.5] transition-all"}
                   />
                 )
               })}

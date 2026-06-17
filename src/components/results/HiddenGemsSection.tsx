@@ -16,14 +16,14 @@ export default function HiddenGemsSection({ data }: { data: DashboardData }) {
          className="mb-16"
       >
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white mb-6">
-          High Conviction Discoveries
+          High Conviction Value
         </h2>
         <p className="text-xl text-slate-400 font-light max-w-2xl leading-relaxed">
-          The top candidates who possess extraordinary evidence density but were bypassed due to superficial keyword mismatches.
+          Assets that hold extraordinary evidence density but are completely mispriced by standard models.
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         {gems.map((gem, i) => (
           <motion.div
             key={gem.candidate_id}
@@ -31,38 +31,40 @@ export default function HiddenGemsSection({ data }: { data: DashboardData }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative bg-black/40 backdrop-blur-md border border-white/5 rounded-3xl p-8 hover:bg-white/[0.02] hover:border-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl"
+            className="group relative bg-[#070709] border border-white/5 rounded-[2rem] p-8 md:p-10 hover:bg-[#0a0a0c] hover:border-cyan-500/20 transition-all duration-700 hover:-translate-y-2 shadow-2xl overflow-hidden"
           >
-             <div className="absolute top-0 right-0 p-8">
+             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+             <div className="absolute top-0 right-0 p-8 md:p-10">
                <div className="text-right">
-                 <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-500 mb-1">Evidence Mix</div>
-                 <div className="text-2xl font-medium tracking-tighter text-cyan-400">{gem.tmi}x</div>
+                 <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-500 mb-1">Density Multiple</div>
+                 <div className="text-3xl font-medium tracking-tighter text-cyan-400">{gem.tmi}x</div>
                </div>
              </div>
 
-             <div className="mb-8">
-                <div className="text-xs uppercase font-semibold tracking-widest text-slate-600 mb-3 block">Opportunity</div>
-                <h3 className="text-2xl font-medium text-white tracking-tight mb-2">Candidate {gem.candidate_id.split('_').pop()}</h3>
-                <p className="text-sm text-slate-400 font-light">{gem.title}</p>
+             <div className="mb-10 mt-2">
+                <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-500 mb-3 block">Identified Asset</div>
+                <h3 className="text-3xl font-medium text-white tracking-tight mb-2">Candidate {gem.candidate_id.split('_').pop()}</h3>
+                <p className="text-base text-slate-400 font-light">{gem.title}</p>
              </div>
 
-             <div className="grid grid-cols-2 gap-8 mb-8 pb-8 border-b border-white/5">
+             <div className="grid grid-cols-2 gap-8 mb-10 pb-10 border-b border-white/5">
                 <div>
-                   <div className="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-2 block">ATS Market Rank</div>
-                   <div className="text-3xl font-light text-slate-500 strike line-through decoration-white/10 tracking-tighter">#{gem.ats_rank}</div>
+                   <div className="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-2 block">Prior ATS Value</div>
+                   <div className="text-4xl font-light text-slate-600 strike line-through decoration-white/10 tracking-tighter">#{gem.ats_rank}</div>
                 </div>
                 <div>
-                   <div className="text-[10px] uppercase tracking-widest text-white/50 font-semibold mb-2 block">Discovery Rank</div>
-                   <div className="text-3xl font-medium text-white tracking-tighter">#{gem.our_rank}</div>
+                   <div className="text-[10px] uppercase tracking-widest text-cyan-400/80 font-semibold mb-2 block">Discovery Value</div>
+                   <div className="text-4xl font-medium text-white tracking-tighter">#{gem.our_rank}</div>
                 </div>
              </div>
 
-             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+             <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                 <div>
-                  <div className="text-[10px] uppercase font-semibold tracking-widest text-cyan-400/70 mb-3 block">Core Conviction Drivers</div>
-                  <ul className="space-y-3">
+                  <div className="text-[10px] uppercase font-semibold tracking-widest text-cyan-400/70 mb-4 block">Core Signals</div>
+                  <ul className="space-y-4">
                     {gem.trust_drivers.slice(0, 3).map((driver, idx) => (
-                      <li key={idx} className="flex gap-3 text-sm font-light text-slate-300 items-start">
+                      <li key={idx} className="flex gap-4 text-sm font-light text-slate-300 items-start">
                         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/50 mt-1.5 shrink-0" />
                         <span className="leading-relaxed">{driver}</span>
                       </li>
@@ -71,11 +73,11 @@ export default function HiddenGemsSection({ data }: { data: DashboardData }) {
                   </ul>
                 </div>
                 <div>
-                  <div className="text-[10px] uppercase font-semibold tracking-widest text-rose-400/70 mb-3 block">Algorithmic Concerns</div>
-                  <ul className="space-y-3">
+                  <div className="text-[10px] uppercase font-semibold tracking-widest text-rose-400/70 mb-4 block">Risk Vectors</div>
+                  <ul className="space-y-4">
                     {gem.concerns.slice(0, 2).map((concern, idx) => (
-                      <li key={idx} className="flex gap-3 text-sm font-light text-slate-400 items-start">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-400/50 mt-1.5 shrink-0" />
+                      <li key={idx} className="flex gap-4 text-sm font-light text-slate-400 items-start">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-400/30 mt-1.5 shrink-0" />
                         <span className="leading-relaxed">{concern}</span>
                       </li>
                     ))}
