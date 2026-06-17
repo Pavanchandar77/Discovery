@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { DashboardData } from '../../types';
+import { formatInt } from '../../lib/utils';
 
 export default function InsightsSection({ data }: { data: DashboardData }) {
-  const avgTmi = data.avg_tmi.toFixed(1);
-  const highestTmi = data.highest_tmi.toFixed(1);
+  const avgTmi = formatInt(data.avg_tmi);
+  const highestTmi = formatInt(data.highest_tmi);
 
   return (
     <section className="min-h-screen py-24 px-6 md:px-12 max-w-7xl mx-auto flex flex-col justify-center">
@@ -52,10 +53,10 @@ export default function InsightsSection({ data }: { data: DashboardData }) {
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
           className="md:col-span-4 bg-white/[0.02] border border-white/5 rounded-3xl p-8 md:p-12 flex flex-col justify-between"
         >
-           <div className="text-[10px] font-semibold tracking-widest text-slate-500 uppercase mb-4 block">Average Market Discrepancy</div>
-           <div className="text-5xl md:text-6xl font-medium tracking-tighter text-white mb-4">{avgTmi}x</div>
+           <div className="text-[10px] font-semibold tracking-widest text-slate-500 uppercase mb-4 block">Average TMI</div>
+           <div className="text-5xl md:text-6xl font-medium tracking-tighter text-white mb-4">{avgTmi}<span className="text-2xl text-slate-500 ml-2">pos</span></div>
            <p className="text-sm md:text-base text-slate-400 font-light leading-relaxed">
-              Global Talent Mispricing Index (TMI) calculated across the entire dataset.
+              Mean Talent Mispricing Index — positions the ATS undervalues talent by across the dataset.
            </p>
         </motion.div>
 
@@ -74,10 +75,10 @@ export default function InsightsSection({ data }: { data: DashboardData }) {
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
           className="md:col-span-4 bg-white/[0.02] border border-white/5 rounded-3xl p-8 md:p-12 flex flex-col justify-between"
         >
-           <div className="text-[10px] font-semibold tracking-widest text-cyan-400/80 uppercase mb-4 block">Maximum Alpha</div>
-           <div className="text-5xl md:text-6xl font-medium tracking-tighter text-white mb-4">{highestTmi}x</div>
+           <div className="text-[10px] font-semibold tracking-widest text-cyan-400/80 uppercase mb-4 block">Highest TMI</div>
+           <div className="text-5xl md:text-6xl font-medium tracking-tighter text-white mb-4">{highestTmi}<span className="text-2xl text-slate-500 ml-2">pos</span></div>
            <p className="text-sm md:text-base text-slate-400 font-light leading-relaxed">
-              Highest recorded evidence density compared to expected ATS baseline.
+              The single biggest mispricing — positions between this candidate's ATS rank and ours.
            </p>
         </motion.div>
 

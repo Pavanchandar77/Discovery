@@ -2,10 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { DashboardData } from '../../types';
+import { formatTmi } from '../../lib/utils';
 
 export default function ExplorerSection({ data }: { data: DashboardData }) {
   const [query, setQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const maxTmi = useMemo(
+    () => Math.max(1, ...data.cards.map((c) => c.tmi)),
+    [data]
+  );
 
   const filtered = useMemo(() => {
     return data.cards.filter(c => 
@@ -49,7 +55,7 @@ export default function ExplorerSection({ data }: { data: DashboardData }) {
            <div className="col-span-4">Identified Asset</div>
            <div className="col-span-2 text-right">Market Value (ATS)</div>
            <div className="col-span-2 text-right text-cyan-500/80">True Value</div>
-           <div className="col-span-3 text-right">Evidence Multiple</div>
+           <div className="col-span-3 text-right">Talent Mispricing Index</div>
            <div className="col-span-1"></div>
          </div>
 
@@ -90,11 +96,11 @@ export default function ExplorerSection({ data }: { data: DashboardData }) {
                    </div>
                    
                    <div className="col-span-3 text-right hidden md:block w-full">
-                      <div className="text-slate-300 font-medium font-mono">{c.tmi.toFixed(1)}x</div>
+                      <div className="text-slate-300 font-medium font-mono">{formatTmi(c.tmi)}</div>
                       <div className="w-full h-1 bg-white/5 rounded-full mt-2 overflow-hidden flex justify-end">
-                        <div 
-                           className={`h-full rounded-full transition-all duration-1000 ${isGem ? 'bg-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'bg-slate-500'}`} 
-                           style={{ width: `${Math.min(c.tmi, 100)}%` }}
+                        <div
+                           className={`h-full rounded-full transition-all duration-1000 ${isGem ? 'bg-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'bg-slate-500'}`}
+                           style={{ width: `${Math.max(2, Math.min(100, (c.tmi / maxTmi) * 100))}%` }}
                         />
                       </div>
                    </div>

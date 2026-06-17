@@ -182,10 +182,10 @@ export default function LandingScreen({ onDemo, onUpload }: Props) {
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const f = e.dataTransfer.files[0];
-      if (f.name.endsWith('.zip') || f.name.endsWith('.jsonl')) {
+      if (f.name.endsWith('.zip') || f.name.endsWith('.jsonl') || f.name.endsWith('.jsonl.gz') || f.name.endsWith('.gz')) {
          onUpload(f);
       } else {
-         alert("Please upload a .zip or .jsonl file");
+         alert("Please upload a .zip, .jsonl or .jsonl.gz file");
       }
     }
   };
@@ -280,9 +280,9 @@ export default function LandingScreen({ onDemo, onUpload }: Props) {
                <ScanLine className="w-5 h-5 flex-shrink-0" />
                <span className="whitespace-nowrap">Select File</span>
                <input 
-                 type="file" 
-                 className="hidden" 
-                 accept=".zip,.jsonl" 
+                 type="file"
+                 className="hidden"
+                 accept=".zip,.jsonl,.jsonl.gz,.gz"
                  onChange={(e) => {
                    if (e.target.files?.[0]) onUpload(e.target.files[0]);
                  }} 
